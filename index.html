@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>조 확인하기 — 품질혁신센터</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #f5f5f3;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 420px;
+  }
+  .logo {
+    font-size: 12px;
+    color: #999;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 6px;
+  }
+  .sub {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 2rem;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 13px 16px;
+    font-size: 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    outline: none;
+    color: #111;
+    background: #fff;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  input[type="text"]:focus {
+    border-color: #639922;
+    box-shadow: 0 0 0 3px rgba(99,153,34,0.1);
+  }
+  button {
+    padding: 13px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    background: #639922;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  button:hover { background: #527f1c; }
+  button:active { transform: scale(0.97); }
+  .hint {
+    font-size: 12px;
+    color: #bbb;
+    margin-top: 4px;
+  }
+  .result { margin-top: 1.25rem; }
+  .jo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #EAF3DE;
+    color: #3B6D11;
+    font-size: 36px;
+    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    letter-spacing: -0.5px;
+  }
+  .name-big {
+    font-size: 22px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 4px;
+  }
+  .team-row {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.6;
+  }
+  .result-label {
+    font-size: 11px;
+    color: #bbb;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid #f0f0f0;
+    margin: 14px 0;
+  }
+  .multi-badge {
+    display: inline-block;
+    background: #fff3cd;
+    color: #7d5a00;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .multi-item {
+    padding: 14px 0;
+  }
+  .multi-item:not(:last-child) {
+    border-bottom: 1px solid #f4f4f4;
+  }
+  .multi-item .jo-badge {
+    font-size: 24px;
+    padding: 7px 16px;
+    margin-bottom: 8px;
+  }
+  .error-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: #fff1f0;
+    border-radius: 12px;
+    color: #c0392b;
+    font-size: 14px;
+    margin-top: 1rem;
+  }
+  .error-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  @media (max-width: 380px) {
+    h1 { font-size: 22px; }
+    .jo-badge { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">품질혁신센터</div>
+  <h1>조 확인하기</h1>
+  <p class="sub">이름을 입력하면 배정된 조를 알려드려요</p>
+
+  <div class="card">
+    <div class="input-row">
+      <input type="text" id="nameInput" placeholder="이름 입력" autocomplete="off" />
+      <button onclick="search()">확인</button>
+    </div>
+    <p class="hint">* 이름은 정확히 입력해 주세요</p>
+    <div id="result"></div>
+  </div>
+</div>
+
+<script>
+const data = [
+  {jo:1,dan:"품질혁신센터",team:"센터장",name:"강봉수"},
+  {jo:1,dan:"대고객/디바이스품질담당",team:"모바일디바이스품질팀",name:"김선기"},
+  {jo:1,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"문소현"},
+  {jo:1,dan:"NW/IT품질담당",team:"NW품질거버넌스팀",name:"노병권"},
+  {jo:2,dan:"직속",team:"전문위원",name:"박종호"},
+  {jo:2,dan:"NW/IT품질담당",team:"NW/IT품질/통합관제기획팀",name:"정홍화"},
+  {jo:2,dan:"대고객/디바이스품질담당",team:"고객품질혁신팀",name:"김범석"},
+  {jo:2,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"강병훈"},
+  {jo:3,dan:"대고객/디바이스품질담당",team:"모바일디바이스품질팀",name:"김민정"},
+  {jo:3,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"김인호"},
+  {jo:3,dan:"직속",team:"품질기획/거버넌스팀",name:"강익준"},
+  {jo:3,dan:"NW/IT품질담당",team:"NW/IT품질/통합관제기획팀",name:"이규원"},
+  {jo:4,dan:"직속",team:"품질기획/거버넌스팀",name:"김정면"},
+  {jo:4,dan:"NW/IT품질담당",team:"NW/IT품질/통합관제기획팀",name:"이준석"},
+  {jo:4,dan:"직속",team:"품질기획/거버넌스팀",name:"김미리"},
+  {jo:4,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"전효진"},
+  {jo:5,dan:"직속",team:"품질기획/거버넌스팀",name:"김철우"},
+  {jo:5,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"문민우"},
+  {jo:5,dan:"NW/IT품질담당",team:"NW/IT품질/통합관제기획팀",name:"이태엽"},
+  {jo:5,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"김보성"},
+  {jo:6,dan:"직속",team:"품질기획/거버넌스팀",name:"박준태"},
+  {jo:6,dan:"NW/IT품질담당",team:"NW/IT품질/통합관제기획팀",name:"조주영"},
+  {jo:6,dan:"대고객/디바이스품질담당",team:"모바일디바이스품질팀",name:"유해영"},
+  {jo:6,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"박재규"},
+  {jo:7,dan:"NW/IT품질담당",team:"NW/IT품질/통합관제기획팀",name:"차호석"},
+  {jo:7,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"백의현"},
+  {jo:7,dan:"직속",team:"품질기획/거버넌스팀",name:"임채현"},
+  {jo:7,dan:"대고객/디바이스품질담당",team:"모바일서비스품질팀",name:"최성준"},
+  {jo:8,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"신상욱"},
+  {jo:8,dan:"직속",team:"품질기획/거버넌스팀",name:"허의형"},
+  {jo:8,dan:"NW/IT품질담당",team:"NW품질거버넌스팀",name:"이호림"},
+  {jo:8,dan:"직속",team:"품질진단팀",name:"김완열"},
+  {jo:9,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"양장모"},
+  {jo:9,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"김태철"},
+  {jo:9,dan:"NW/IT품질담당",team:"NW품질거버넌스팀",name:"황선규"},
+  {jo:10,dan:"대고객/디바이스품질담당",team:"모바일서비스품질팀",name:"홍세진"},
+  {jo:10,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"이성철"},
+  {jo:10,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"정용호"},
+  {jo:10,dan:"NW/IT품질담당",team:"NW품질거버넌스팀",name:"김철원"},
+  {jo:11,dan:"직속",team:"품질진단팀",name:"김기나"},
+  {jo:11,dan:"대고객/디바이스품질담당",team:"모바일서비스품질팀",name:"천상우"},
+  {jo:11,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"임선영"},
+  {jo:11,dan:"NW/IT품질담당",team:"NW품질거버넌스팀",name:"백인"},
+  {jo:12,dan:"대고객/디바이스품질담당",team:"모바일서비스품질팀",name:"김광준"},
+  {jo:12,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"정태식"},
+  {jo:12,dan:"직속",team:"품질진단팀",name:"정광식"},
+  {jo:12,dan:"NW/IT품질담당",team:"NW품질거버넌스팀",name:"윤규섭"},
+  {jo:13,dan:"대고객/디바이스품질담당",team:"모바일서비스품질팀",name:"김민규"},
+  {jo:13,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"최철호"},
+  {jo:13,dan:"NW/IT품질담당",team:"NW품질거버넌스팀",name:"이기훈"},
+  {jo:13,dan:"대고객/디바이스품질담당",team:"공급품질관리팀",name:"박덕수"},
+  {jo:13,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"김지황"},
+  {jo:13,dan:"대고객/디바이스품질담당",team:"모바일서비스품질팀",name:"임진기"},
+  {jo:14,dan:"대고객/디바이스품질담당",team:"ixi-O서비스품질팀",name:"박현욱"},
+  {jo:14,dan:"직속",team:"품질진단팀",name:"심지윤"},
+  {jo:14,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"김시영"},
+  {jo:14,dan:"대고객/디바이스품질담당",team:"공급품질관리팀",name:"윤정희"},
+  {jo:14,dan:"대고객/디바이스품질담당",team:"ixi-O서비스품질팀",name:"임준우"},
+  {jo:14,dan:"직속",team:"품질진단팀",name:"이종택"},
+  {jo:15,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"남덕영"},
+  {jo:15,dan:"대고객/디바이스품질담당",team:"공급품질관리팀",name:"이상용"},
+  {jo:15,dan:"직속",team:"품질진단팀",name:"이창원"},
+  {jo:15,dan:"대고객/디바이스품질담당",team:"ixi-O서비스품질팀",name:"김희석"},
+  {jo:16,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"박철옥"},
+  {jo:16,dan:"대고객/디바이스품질담당",team:"공급품질관리팀",name:"정진욱"},
+  {jo:16,dan:"NW/IT품질담당",team:"담당",name:"이서호"},
+  {jo:16,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"김현경"},
+  {jo:17,dan:"대고객/디바이스품질담당",team:"공급품질관리팀",name:"정혜영"},
+  {jo:17,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"오병훈"},
+  {jo:17,dan:"대고객/디바이스품질담당",team:"공급품질관리팀",name:"곽영민"},
+  {jo:17,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"김창대"},
+  {jo:18,dan:"NW/IT품질담당",team:"서비스품질리스크관리팀",name:"임용성"},
+  {jo:18,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"이창희"},
+  {jo:18,dan:"대고객/디바이스품질담당",team:"전문위원",name:"김현경"},
+  {jo:18,dan:"직속",team:"품질진단팀",name:"서영석"},
+  {jo:19,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"정유식"},
+  {jo:19,dan:"NW/IT품질담당",team:"전문위원",name:"이영민"},
+  {jo:19,dan:"NW/IT품질담당",team:"서비스품질리스크관리팀",name:"박종선"},
+  {jo:19,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"박준형"},
+  {jo:20,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"박기율"},
+  {jo:20,dan:"NW/IT품질담당",team:"IT품질거버넌스팀",name:"최동식"},
+  {jo:20,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"이상환"},
+  {jo:20,dan:"대고객/디바이스품질담당",team:"고객품질혁신팀",name:"박세용"},
+  {jo:21,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"권혁윤"},
+  {jo:21,dan:"대고객/디바이스품질담당",team:"고객품질혁신팀",name:"김원경"},
+  {jo:21,dan:"NW/IT품질담당",team:"유선서비스품질기술팀",name:"김원석"},
+  {jo:21,dan:"NW/IT품질담당",team:"서비스품질리스크관리팀",name:"여구영"},
+  {jo:22,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"정상윤"},
+  {jo:22,dan:"NW/IT품질담당",team:"서비스품질리스크관리팀",name:"정영곤"},
+  {jo:22,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"차진"},
+  {jo:22,dan:"대고객/디바이스품질담당",team:"고객품질혁신팀",name:"최상훈"},
+  {jo:23,dan:"대고객/디바이스품질담당",team:"고객품질혁신팀",name:"서미서"},
+  {jo:23,dan:"NW/IT품질담당",team:"유선서비스품질기술팀",name:"김종민"},
+  {jo:23,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"김명찬"},
+  {jo:23,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"이수빈"},
+  {jo:24,dan:"대고객/디바이스품질담당",team:"고객품질혁신팀",name:"지우송"},
+  {jo:24,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"김민수"},
+  {jo:24,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"이영윤"},
+  {jo:24,dan:"NW/IT품질담당",team:"유선서비스품질기술팀",name:"선가람"},
+  {jo:25,dan:"NW/IT품질담당",team:"서비스품질리스크관리팀",name:"최용운"},
+  {jo:25,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"이용균"},
+  {jo:25,dan:"대고객/디바이스품질담당",team:"담당",name:"김진만"},
+  {jo:25,dan:"NW/IT품질담당",team:"유선서비스품질기술팀",name:"김도현"},
+  {jo:26,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"김현주"},
+  {jo:26,dan:"대고객/디바이스품질담당",team:"공급품질관리팀",name:"김영민"},
+  {jo:26,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"심규배"},
+  {jo:26,dan:"NW/IT품질담당",team:"NW/IT품질/통합관제기획팀",name:"곽세희"},
+  {jo:27,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"조규호"},
+  {jo:27,dan:"대고객/디바이스품질담당",team:"Enterprise품질팀",name:"박재규"},
+  {jo:27,dan:"NW/IT품질담당",team:"유선서비스품질기술팀",name:"이창훈"},
+  {jo:27,dan:"대고객/디바이스품질담당",team:"모바일서비스품질팀",name:"조강천"},
+  {jo:27,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"장명성"},
+  {jo:27,dan:"NW/IT품질담당",team:"유선서비스품질기술팀",name:"김승연"},
+  {jo:28,dan:"대고객/디바이스품질담당",team:"홈디바이스품질기술팀",name:"이정우"},
+  {jo:28,dan:"대고객/디바이스품질담당",team:"모바일디바이스품질팀",name:"김성열"},
+  {jo:28,dan:"NW/IT품질담당",team:"유선서비스품질기술팀",name:"황혜진"},
+  {jo:28,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"주우석"},
+  {jo:28,dan:"대고객/디바이스품질담당",team:"ixi-O서비스품질팀",name:"구자원"},
+  {jo:28,dan:"대고객/디바이스품질담당",team:"홈/미디어품질팀",name:"진한구"},
+];
+
+function search() {
+  const q = document.getElementById('nameInput').value.trim();
+  const box = document.getElementById('result');
+  if (!q) { box.innerHTML = ''; return; }
+
+  const found = data.filter(d => d.name === q);
+
+  if (found.length === 0) {
+    box.innerHTML = `<div class="error-box">
+      <span class="error-icon">⚠️</span>
+      <span>이름을 찾을 수 없어요. 정확히 입력했는지 확인해 주세요.</span>
+    </div>`;
+    return;
+  }
+
+  if (found.length === 1) {
+    const p = found[0];
+    box.innerHTML = `<hr class="divider">
+      <div class="result-label">배정 조</div>
+      <div class="jo-badge">${p.jo}조</div>
+      <div class="name-big">${p.name}</div>
+      <div class="team-row">${p.dan}<br>${p.team}</div>`;
+  } else {
+    const items = found.map(p => `
+      <div class="multi-item">
+        <div class="jo-badge">${p.jo}조</div>
+        <div class="name-big">${p.name}</div>
+        <div class="team-row">${p.dan}<br>${p.team}</div>
+      </div>`).join('');
+    box.innerHTML = `<hr class="divider">
+      <div class="result-label">동명이인 ${found.length}명</div>
+      <div class="multi-badge">소속 팀으로 본인 조를 확인하세요</div>
+      ${items}`;
+  }
+}
+
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') search();
+});
+</script>
+</body>
+</html>
